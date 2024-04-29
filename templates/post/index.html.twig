@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List of posts!{% endblock %}
+
+{# content #}
+
+{% block body %}
+    <style>
+        .post-container {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .post-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .post-body {
+            font-size: 14px;
+        }
+        .post-author {
+            font-style: italic;
+        }
+        .delete-button {
+            background-color: #ff5555;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+
+    <div class="post-container">
+        <h1>Posts</h1>
+        {% for post in pagination %}
+            <div class="post-item">
+                <h2 class="post-title">Title: {{ post.title }}</h2>
+                <p class="post-body">Body: {{ post.body }}</p>
+                <p class="post-author">Author: {{ post.author }}</p>
+                <form method="post" action="{{ path('post_delete', {'id': post.id}) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+            </div>
+        {% endfor %}
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+{% endblock %}
