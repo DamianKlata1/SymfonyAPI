@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Post;
+use App\Exception\ApiFetchFailedException;
 use App\Service\AuthorServiceInterface;
 use App\Service\PostService;
 use App\Service\PostServiceInterface;
@@ -39,14 +40,16 @@ class GetPostsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $posts = $this->postService->getPosts();
-
-        $authors = $this->authorService->getAuthors();
-
-        $this->postService->savePosts($posts, $authors);
-
-        $io->success('Posts have been saved to database');
-
-        return Command::SUCCESS;
+        try{
+            $posts = $this->postService->getPosts();
+            $authors = $this->authorService->getAuthors();
+            $this->postService->savePosts($posts, $authors);
+            $io->success('Posts have been saved to database');
+            return Command::SUCCESS;
+        }
+        catch(ApiFetchFailedException $e){
+            $io->error($e->getMessage());
+            return Command::FAILURE;
+        }
     }
 }

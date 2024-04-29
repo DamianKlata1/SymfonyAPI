@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome to My Application{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+    </style>
+    <div class="container">
+
+        {% if is_granted('ROLE_USER') %}
+            <p>You are authenticated as a user. You can view the list of <a href="{{ path('list') }}"
+                                                                                  >posts</a>.</p>
+        {% else %}
+            <h2>Getting Started</h2>
+            <ol>
+                <li>Run the following command to load the fixtures (sample data):
+                    <pre>php bin/console doctrine:fixtures:load</pre>
+                </li>
+                <li>Use the following credentials to <a href="{{ path('app_login') }}">log in</a>:
+                    <ul>
+                        <li>Email: user@example.pl</li>
+                        <li>Password: password</li>
+                    </ul>
+                </li>
+            </ol>
+
+        {% endif %}
+
+        <h2>Routes</h2>
+        <ul>
+            <li><a href="{{ path('list') }}">/list</a></li>
+            <li><a href="{{ path('app_login') }}">/login</a></li>
+            <li><a href="{{ path('app_logout') }}">/logout</a></li>
+            <li>/api/posts</li>
+        </ul>
+
+    </div>
+{% endblock %}

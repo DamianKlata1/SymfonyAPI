@@ -38,11 +38,27 @@
         .delete-button:hover {
             background-color: #cc0000;
         }
+        .alert-success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+        .alert-danger {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
     </style>
 
     <div class="post-container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
         <h1>Posts</h1>
-        {% for post in pagination %}
+        {% for post in posts %}
             <div class="post-item">
                 <h2 class="post-title">Title: {{ post.title }}</h2>
                 <p class="post-body">Body: {{ post.body }}</p>
@@ -53,7 +69,7 @@
             </div>
         {% endfor %}
         <div class="pagination">
-            {{ knp_pagination_render(pagination) }}
+            {{ knp_pagination_render(posts) }}
         </div>
     </div>
 {% endblock %}

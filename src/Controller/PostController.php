@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Exception\DeleteFailedException;
 use App\Service\PostServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -16,7 +17,6 @@ class PostController extends AbstractController
 
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private PaginatorInterface $paginator,
         private PostServiceInterface $postService
     )
@@ -26,23 +26,25 @@ class PostController extends AbstractController
     #[Route('/list', name: 'list')]
     public function index(Request $request): Response
     {
-        $allPostsQuery = $this->entityManager->getRepository(Post::class)->createQueryBuilder('p')->getQuery();
-        $pagination = $this->paginator->paginate(
+        $allPostsQuery = $this->postService->getAllPostsQuery();
+        $posts = $this->paginator->paginate(
             $allPostsQuery,
             $request->query->getInt('page', 1),
             10
         );
-
-
-        return $this->render('post/index.html.twig', [
-            'pagination' => $pagination,
+        return $this->render('post/list.html.twig', [
+            'posts' => $posts,
         ]);
     }
     #[Route('/delete/{id}', name: 'post_delete')]
     public function delete(Post $post): Response
     {
-        $this->postService->deletePost($post);
-
+        try {
+            $this->postService->deletePost($post);
+            $this->addFlash('success', 'Post deleted successfully.');
+        } catch (DeleteFailedException  $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
         return $this->redirectToRoute('list');
     }
 }
